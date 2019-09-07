@@ -22,7 +22,8 @@
       Agregar<br>
       Container: normal<button type="button" onclick="addContainer('normal')">+ </button> fluid<button type="button" onclick="addContainer('fluid')">+</button><br>
       Row <button type="button" onclick="addRow()">+</button><br>
-      Col: <input type="number" name="col" />, md-<input type="number" name="colMd" />, lg-<input type="number" name="colLg" /> <button type="button" onclick="addCol()">+</button>
+      Col: <input type="number" name="col" />, md-<input type="number" name="colMd" />, lg-<input type="number" name="colLg" /> <button type="button" onclick="addCol()">+</button><br>
+      <button type="button" onclick="remove()">-</button><br>
     </div>
     <div id="arbol">
     </div>
@@ -76,11 +77,13 @@
           .appendTo($arbolEle || $arbol)
         
         $ele.data('arbolEle', $span)
+        
+        //$span.click()
       }
       
       function addEle($ele){
         var $sel = getSelArbolEle() || $main
-        $ele.css('border', 'solid 1px ' + _randColor())
+        $ele.css('backgroundColor', _randColor())
         $sel.append($ele)
         addToArbol($sel, $ele)
       }
@@ -104,6 +107,15 @@
         if (colLg) classNames.push('col-lg-' + colLg)
         var $ele = $('<div/>', {class: classNames.join(' ')})
         addEle($ele)
+      }
+      
+      function remove(){
+        var $sel = getSelArbolEle()
+        if (!$sel) return
+        
+        var $selArbol = $sel.data('arbolEle')
+        $sel.remove()
+        $selArbol.remove()
       }
       
       $(function(){
