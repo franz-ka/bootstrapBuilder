@@ -1,0 +1,115 @@
+<html>
+  <head>
+    <title></title>
+    <meta content="">
+    <link href="bootstrap-4.3.1-dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      input{width: 50px}
+      #arbol .selected {
+        background-color: aquamarine
+      }
+      
+      .container, .container-fluid {min-height: 50px}
+      .row {min-height: 70px}
+      .col {min-height: 100px}
+    </style>
+  </head>
+  <body>   
+    
+    <div id="main"></div>
+    
+    <div id="panel">
+      Agregar<br>
+      Container: normal<button type="button" onclick="addContainer('normal')">+ </button> fluid<button type="button" onclick="addContainer('fluid')">+</button><br>
+      Row <button type="button" onclick="addRow()">+</button><br>
+      Col: <input type="number" name="col" />, md-<input type="number" name="colMd" />, lg-<input type="number" name="colLg" /> <button type="button" onclick="addCol()">+</button>
+    </div>
+    <div id="arbol">
+    </div>
+
+    <script src="jquery-3.4.1.min.js"></script>
+    <script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+    
+    <script>
+      var $main = $('#main')
+      var $arbol = $('#arbol')
+      
+      function _randColor() {return "#"+((1<<24)*Math.random()|0).toString(16)}
+      
+      var _arbolSelClass = 'selected'
+      function getSelArbol(){
+        var $sel = $arbol.find('.'+_arbolSelClass)
+        return $sel.length ? $sel : null
+      }
+      function getSelArbolEle(){
+        var $sel = getSelArbol()
+        return $sel ? $sel.data('srcEle') : null
+      }
+      function clickArbol(ev){
+        var $this = $(this)
+        var $sel = getSelArbol()
+        if (!$sel)
+          $this.addClass(_arbolSelClass)
+        else if ($sel.is($this))
+          $this.removeClass(_arbolSelClass)
+        else {
+          $sel.removeClass(_arbolSelClass)
+          $this.addClass(_arbolSelClass)
+        }
+        ev.stopPropagation();
+      }
+      
+      function addToArbol($parEle, $ele){ 
+        var $arbolEle = $parEle.data('arbolEle')
+        var eleLevel = $arbolEle ? $arbolEle.data('level') + 1 : 0
+        
+        var $span = $('<div/>')
+          .data('level', eleLevel)
+          .data('srcEle', $ele)
+        
+        var strLevel = ''
+        for (var i = 0; i<eleLevel; i++)
+          strLevel += '-'
+        
+        $span.html(strLevel + $ele[0].className)
+          .click(clickArbol)
+          .appendTo($arbolEle || $arbol)
+        
+        $ele.data('arbolEle', $span)
+      }
+      
+      function addEle($ele){
+        var $sel = getSelArbolEle() || $main
+        $ele.css('border', 'solid 1px ' + _randColor())
+        $sel.append($ele)
+        addToArbol($sel, $ele)
+      }
+      
+      function addContainer(type){
+        var className = type == 'fluid' ? 'container-fluid' : 'container'
+        var $ele = $('<div/>', {class: className})
+        addEle($ele)
+      }      
+      function addRow(){
+        var $ele = $('<div/>', {class: 'row'})
+        addEle($ele)
+      }  
+      function addCol(){
+        var col = $('input[name=col]').val()
+        var colMd = $('input[name=colMd]').val()
+        var colLg = $('input[name=colLg]').val()
+        var classNames = ['col']
+        if (col) classNames.push('col-' + col)
+        if (colMd) classNames.push('col-md-' + colMd)
+        if (colLg) classNames.push('col-lg-' + colLg)
+        var $ele = $('<div/>', {class: classNames.join(' ')})
+        addEle($ele)
+      }
+      
+      $(function(){
+        
+      })
+    </script>
+  </body>
+</html>
+
